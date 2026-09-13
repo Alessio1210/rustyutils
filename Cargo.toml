@@ -1,0 +1,15 @@
+[package]
+name = "rustyutils"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+path = "src/lib.rs"
+
+[features]
+default = []
+odbc = ["dep:odbc-api"]
+
+[dependencies]
+polars = { version = "0.53", default-features = false, features = ["dtype-datetime"] }
+odbc-api = { version = "28.1.1", optional = true }
