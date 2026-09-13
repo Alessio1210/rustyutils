@@ -89,6 +89,24 @@ where
     Ok(fetch_odbc_table(config, query, params)?.to_polars()?)
 }
 
+/// Execute one parameterized query and return its rows as a Polars `DataFrame`.
+///
+/// This is the Rust equivalent of Python's `Connection.run_query`. It deliberately
+/// does no hidden caching or retry: callers can choose a [`crate::Cache`] policy
+/// and surface database failures instead of receiving stale data unexpectedly.
+/// Pass `()` when the SQL has no `?` placeholders.
+#[cfg(feature = "odbc")]
+pub fn run_query<P>(
+    config: &OdbcConfig,
+    query: &str,
+    params: P,
+) -> Result<polars::prelude::DataFrame, OdbcError>
+where
+    P: odbc_api::ParameterCollectionRef,
+{
+    fetch_odbc(config, query, params)
+}
+
 /// Same reader as [`fetch_odbc`], retaining crate-native column data.
 ///
 /// ODBC text buffers preserve `NULL` as `Value::Null`; database values are text
